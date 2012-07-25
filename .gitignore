@@ -1,8 +1,6 @@
-# Unity Project Files #
+# Unity Meta Files #
 #######################
-Library/
-Temp/
-*.userprefs
+*.meta
 
 # IDE Solution Files #
 ######################
