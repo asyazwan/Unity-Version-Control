@@ -78,6 +78,8 @@ namespace ThinksquirrelSoftware.UnityVersionControl.Core
 		// Configuration argument to add to every command
 		const string mGitConfig = "-c core.quotepath=false ";
 		
+		internal static string repositoryLocationCache = null;
+		
 		/// <summary>
 		/// Runs git asynchronously with the specified arguments.
 		/// </summary>
@@ -92,58 +94,28 @@ namespace ThinksquirrelSoftware.UnityVersionControl.Core
 		/// <summary>
 		/// Checks to see if the current project has a repository.
 		/// </summary>
-		/// <returns>
-		/// True if the project has a git repository, otherwise false.
-		/// </returns>
-		internal static bool ProjectHasRepository()
+		internal static Process ProjectHasRepository(System.EventHandler exitEventHandler)
 		{
-			var gitProcess = RunGit("rev-parse --is-inside-work-tree", CommandLine.EmptyHandler);
-			bool exited = gitProcess.WaitForExit(5000);
-			
-			if (!exited)
-			{
-				// TODO: This needs to fail and throw an exception. (Git.ProjectHasRepository)
-				return false;
-			}
-			
-			if (gitProcess.ExitCode == 0)
-			{
-				string output = gitProcess.StandardOutput.ReadToEnd();
-				return output.Contains("true");
-			}
-			else
-			{
-				return false;
-			}
+			return Git.RunGit("rev-parse --is-inside-work-tree", exitEventHandler);
+		}
+		
+		internal static bool ParseProjectHasRepository(string input)
+		{
+			return bool.Parse(input);
 		}
 		
 		/// <summary>
-		/// Returns the location of the project's repository.
+		/// Gets the location of the project's repository.
 		/// </summary>
-		internal static string RepositoryLocation()
+		internal static Process GetRepositoryLocation(System.EventHandler exitEventHandler)
 		{
-			if (!ProjectHasRepository())
-				return null;
-			
-			var gitProcess = RunGit("rev-parse --show-toplevel", CommandLine.EmptyHandler);
-			bool exited = gitProcess.WaitForExit(5000);
-			
-			if (!exited)
-			{
-				// TODO: This needs to fail and throw an exception. (Git.RepositoryLocation)
-				return null;
-			}
-			
-			if (gitProcess.ExitCode == 0)
-			{
-				string output = gitProcess.StandardOutput.ReadToEnd();
-				return output.Substring(0, output.Length - 1);	
-			}
-			else
-			{
-				// TODO: This needs to fail and throw an exception. (Git.RepositoryLocation)
-				return null;
-			}
+			return Git.RunGit("rev-parse --show-toplevel", exitEventHandler);
+		}
+		
+		internal static string ParseRepositoryLocation(string input)
+		{
+			repositoryLocationCache = input.Substring(0, input.Length - 1);
+			return repositoryLocationCache;
 		}
 	
 		internal static Process FindFiles(System.EventHandler exitEventHandler)

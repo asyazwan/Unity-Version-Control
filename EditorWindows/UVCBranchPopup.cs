@@ -72,14 +72,19 @@ public class UVCBranchPopup : EditorWindow
 	{
 		this.minSize = new Vector2(600, 160);
 		this.maxSize = new Vector2(600, 160);
-		branchToggles = new bool[BrowserUtility.localBranchNames.Length];
-		
+		if (BrowserUtility.localBranchNames != null)
+		{
+			branchToggles = new bool[BrowserUtility.localBranchNames.Length];
+		}
 		RefreshBranches();
 	}
 	
 	void RefreshBranches()
 	{
 		branchList.Clear();
+		
+		if (remoteBranches == null)
+			return;
 		
 		foreach(var branch in BrowserUtility.branches)
 		{
@@ -122,7 +127,8 @@ public class UVCBranchPopup : EditorWindow
 			}
 			if (selectionGrid == 0)
 			{
-				EditorGUILayout.LabelField("Current Branch:",BrowserUtility.localBranchNames[BrowserUtility.localBranchIndex]);
+				string current = BrowserUtility.localBranchNames != null ? BrowserUtility.localBranchNames[BrowserUtility.localBranchIndex] : "No branches found";
+				EditorGUILayout.LabelField("Current Branch:", current);
 				newBranch = EditorGUILayout.TextField("New Branch:", newBranch);
 				checkoutNewBranch = EditorGUILayout.Toggle("Checkout new branch", checkoutNewBranch);
 				

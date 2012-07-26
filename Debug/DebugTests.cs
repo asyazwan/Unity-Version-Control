@@ -23,14 +23,17 @@
 //    You should have received a copy of the GNU General Public License
 //    along with Unity Version Control.  If not, see <http://www.gnu.org/licenses/>.
 //
+#define DEBUG
 #if DEBUG
 using UnityEditor;
 using UnityEngine;
 using ThinksquirrelSoftware.UnityVersionControl.Core;
+using System.Diagnostics;
+using Debug = UnityEngine.Debug;
 
-namespace ThinksquirrelSoftware.UnityVersionControl.Debug
+namespace ThinksquirrelSoftware.UnityVersionControl.Tests
 {
-	public static class DebugTests
+	public static class SimpleTests
 	{	
 		[MenuItem ("Version Control/Debug/Core Tests/Init")]
 	    static void CoreTest_Init()
@@ -68,9 +71,10 @@ namespace ThinksquirrelSoftware.UnityVersionControl.Debug
 		[MenuItem ("Version Control/Debug/Core Tests/Repository Location")]
 	    static void CoreTest_RepositoryLocation()
 		{
-			string message = VersionControl.RepositoryLocation();
-			
-			EditorUtility.DisplayDialog("Repository Location", message, "Ok", "Cancel");
+			VersionControl.GetRepositoryLocation(
+				(sender, e) => 
+					EditorUtility.DisplayDialog("Repository Location", 
+					VersionControl.ParseRepositoryLocation(((Process)sender).StandardOutput.ReadToEnd()), "Ok"));
 		}
 		
 		[MenuItem ("Version Control/Debug/GUI Tests/Init")]

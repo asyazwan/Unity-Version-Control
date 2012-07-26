@@ -93,7 +93,7 @@ public class UVCProcessPopup : EditorWindow
 		
 		window.ShowPopup();
 		
-		if (unityWorkaround)
+		if (unityWorkaround && Application.platform == RuntimePlatform.OSXEditor)
 		{
 			// Workaround for Unity bug
 			GUIUtility.ExitGUI();

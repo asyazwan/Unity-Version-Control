@@ -83,7 +83,7 @@ public class UVCBrowser : EditorWindow
 	[MenuItem ("Version Control/Browser")]
 	static void Init()
 	{
-		EditorWindow.GetWindow<UVCBrowser>("Version Control");
+		EditorWindow.GetWindow<UVCBrowser>("Ver. Control");
 	}
 	
 	void OnEnable()

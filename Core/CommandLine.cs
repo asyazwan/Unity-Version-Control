@@ -23,12 +23,38 @@
 //    along with Unity Version Control.  If not, see <http://www.gnu.org/licenses/>.
 //
 using UnityEngine;
+using UnityEditor;
 using System.Diagnostics;
+using System.Collections.Generic;
 
 namespace ThinksquirrelSoftware.UnityVersionControl.Core
 {
+	[InitializeOnLoad]
 	public static class CommandLine
 	{
+		private static Queue<Process> processQueue = new Queue<Process>();
+		private static List<Process> runningProcesses = new List<Process>();
+		
+		static CommandLine()
+		{
+			EditorApplication.update += CheckQueue;
+		}
+		
+		static void CheckQueue()
+		{
+			if (processQueue.Count > 0 && runningProcesses.Count < System.Environment.ProcessorCount)
+			{
+				Process p = processQueue.Dequeue();
+				p.Start();
+				runningProcesses.Add(p);
+			}
+			for(int i = runningProcesses.Count - 1; i >= 0; i--)
+			{
+				if(runningProcesses[i].HasExited)
+					runningProcesses.RemoveAt(i);
+			}
+		}
+		
 		/// <summary>
 		/// Runs a command line process asynchronously with the specified arguments.
 		/// </summary>
@@ -54,7 +80,7 @@ namespace ThinksquirrelSoftware.UnityVersionControl.Core
 				process.Exited += new System.EventHandler(exitEventHandler);
 			}
 			
-			process.Start();
+			processQueue.Enqueue(process);
 			
 			return process;
 		}

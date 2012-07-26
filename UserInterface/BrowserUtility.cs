@@ -28,6 +28,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using ThinksquirrelSoftware.UnityVersionControl.Core;
+using System.Diagnostics;
+using Debug = UnityEngine.Debug;
 
 namespace ThinksquirrelSoftware.UnityVersionControl.UserInterface
 {
@@ -251,7 +253,26 @@ namespace ThinksquirrelSoftware.UnityVersionControl.UserInterface
 		public static void OnEnable()
 		{
 			mFrameCount = 0;
-			mRepositoryLocation = Git.RepositoryLocation();
+			mRepositoryLocation = VersionControl.repositoryLocationCache;
+			if (!string.IsNullOrEmpty(mRepositoryLocation))
+			{
+				mRepositoryShortName = mRepositoryLocation.Substring(mRepositoryLocation.LastIndexOf(System.IO.Path.DirectorySeparatorChar) + 1);
+			}
+			else if (!_runningLocationProcess)
+			{
+				mGuiEnabled = false;
+				_runningLocationProcess = true;
+				VersionControl.GetRepositoryLocation(OnRepositoryLocation);
+			}
+		}
+		
+		private static bool _runningLocationProcess = false;
+		
+		static void OnRepositoryLocation(object sender, System.EventArgs e)
+		{
+			mGuiEnabled = true;
+			_runningLocationProcess = false;
+			mRepositoryLocation = VersionControl.ParseRepositoryLocation(((Process)sender).StandardOutput.ReadToEnd());
 			if (!string.IsNullOrEmpty(mRepositoryLocation))
 			{
 				mRepositoryShortName = mRepositoryLocation.Substring(mRepositoryLocation.LastIndexOf(System.IO.Path.DirectorySeparatorChar) + 1);
@@ -724,9 +745,10 @@ namespace ThinksquirrelSoftware.UnityVersionControl.UserInterface
 		/// Updates all tree listings by running three git commands.
 		private static void UpdateTrees()
 		{
-			if (string.IsNullOrEmpty(mRepositoryLocation))
+			if (string.IsNullOrEmpty(mRepositoryLocation) && !_runningLocationProcess)
 			{
-				mRepositoryLocation = Git.RepositoryLocation();
+				_runningLocationProcess = true;
+				VersionControl.GetRepositoryLocation(OnRepositoryLocation);
 			}
 			
 			// Get list of files

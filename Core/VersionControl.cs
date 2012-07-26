@@ -57,6 +57,21 @@ namespace ThinksquirrelSoftware.UnityVersionControl.Core
 			}
 		}
 		
+		public static string repositoryLocationCache
+		{
+			get
+			{
+				switch(mVersionControlType)
+				{
+				case VersionControlType.Git:
+					return Git.repositoryLocationCache;
+				case VersionControlType.Hg:
+					return Hg.repositoryLocationCache;
+				}
+			
+				return string.Empty;
+			}
+		}
 		/// <summary>
 		/// Restarts Unity. Use this when checking out a branch/tag.
 		/// </summary>
@@ -73,9 +88,9 @@ namespace ThinksquirrelSoftware.UnityVersionControl.Core
 			switch(mVersionControlType)
 			{
 			case VersionControlType.Git:
-				return Git.RepositoryLocation() + System.IO.Path.DirectorySeparatorChar + ".gitignore";
+				return Git.repositoryLocationCache + System.IO.Path.DirectorySeparatorChar + ".gitignore";
 			case VersionControlType.Hg:
-				return Git.RepositoryLocation() + System.IO.Path.DirectorySeparatorChar + ".hgignore";
+				return Hg.repositoryLocationCache + System.IO.Path.DirectorySeparatorChar + ".hgignore";
 			}
 			
 			return string.Empty;
@@ -83,33 +98,56 @@ namespace ThinksquirrelSoftware.UnityVersionControl.Core
 		/// <summary>
 		/// Checks to see if the current project has a repository.
 		/// </summary>
-		/// <returns>
-		/// True if the project has a repository, otherwise false.
-		/// </returns>
-		public static bool ProjectHasRepository()
+		public static Process ProjectHasRepository(System.EventHandler exitEventHandler)
 		{
 			switch(mVersionControlType)
 			{
 			case VersionControlType.Git:
-				return Git.ProjectHasRepository();
+				return Git.ProjectHasRepository(exitEventHandler);
 			case VersionControlType.Hg:
-				return Hg.ProjectHasRepository();
+				return Hg.ProjectHasRepository(exitEventHandler);
+			}
+			
+			return null;
+		}
+		
+		public static bool ParseProjectHasRepository(string input)
+		{
+			switch(mVersionControlType)
+			{
+			case VersionControlType.Git:
+				return Git.ParseProjectHasRepository(input);
+			case VersionControlType.Hg:
+				return Hg.ParseProjectHasRepository(input);
 			}
 			
 			return false;
 		}
-		
+			
 		/// <summary>
-		/// Returns the location of the project's repository.
+		/// Gets the location of the project's repository.
 		/// </summary>
-		public static string RepositoryLocation()
+		public static Process GetRepositoryLocation(System.EventHandler exitEventHandler)
 		{
 			switch(mVersionControlType)
 			{
 			case VersionControlType.Git:
-				return Git.RepositoryLocation();
+				return Git.GetRepositoryLocation(exitEventHandler);
 			case VersionControlType.Hg:
-				return Hg.RepositoryLocation();
+				return Hg.GetRepositoryLocation(exitEventHandler);
+			}
+			
+			return null;
+		}
+		
+		public static string ParseRepositoryLocation(string input)
+		{
+			switch(mVersionControlType)
+			{
+			case VersionControlType.Git:
+				return Git.ParseRepositoryLocation(input);
+			case VersionControlType.Hg:
+				return Hg.ParseRepositoryLocation(input);
 			}
 			
 			return null;

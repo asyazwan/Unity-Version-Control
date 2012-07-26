@@ -34,6 +34,8 @@ namespace ThinksquirrelSoftware.UnityVersionControl.Core
 		// Default - "hg"
 		const string mHgCommand = "hg";
 		
+		internal static string repositoryLocationCache = null;
+		
 		/// <summary>
 		/// Runs hg asynchronously with the specified arguments.
 		/// </summary>
@@ -46,13 +48,23 @@ namespace ThinksquirrelSoftware.UnityVersionControl.Core
 		}
 		
 		/// TODO: Implement Hg
-		internal static bool ProjectHasRepository()
+		internal static Process ProjectHasRepository(System.EventHandler exitEventHandler)
+		{
+			throw new System.NotImplementedException();
+		}
+		
+		internal static bool ParseProjectHasRepository(string input)
 		{
 			throw new System.NotImplementedException();
 		}
 		
 		/// TODO: Implement Hg
-		internal static string RepositoryLocation()
+		internal static Process GetRepositoryLocation(System.EventHandler exitEventHandler)
+		{
+			throw new System.NotImplementedException();
+		}
+		
+		internal static string ParseRepositoryLocation(string input)
 		{
 			throw new System.NotImplementedException();
 		}
