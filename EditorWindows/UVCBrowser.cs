@@ -104,7 +104,28 @@ public class UVCBrowser : EditorWindow
 	void LoadSkin()
 	{
 		versionControlSkin = EditorGUIUtility.isProSkin ? Resources.Load("_VersionControlSkin_Default_Dark") as GUISkin : Resources.Load("_VersionControlSkin_Default") as GUISkin;
-	
+		
+		// Load styles if not serialized
+		foreach(GUIStyle style in versionControlSkin.customStyles)
+		{
+			if (!style.normal.background)
+				style.normal.background = Resources.Load(style.name) as Texture2D;
+			if (!style.active.background)
+				style.active.background = Resources.Load(style.name + "_Active") as Texture2D;
+			if (!style.hover.background)
+				style.hover.background = Resources.Load(style.name) as Texture2D;
+			if (!style.focused.background)
+				style.focused.background = Resources.Load(style.name) as Texture2D;
+			
+			if (!style.onNormal.background)
+				style.onNormal.background = Resources.Load(style.name) as Texture2D;
+			if (!style.onActive.background)
+				style.onActive.background = Resources.Load(style.name + "_Active") as Texture2D;
+			if (!style.onHover.background)
+				style.onHover.background = Resources.Load(style.name) as Texture2D;
+			if (!style.onFocused.background)
+				style.onFocused.background = Resources.Load(style.name) as Texture2D;
+		}
 		versionControlTypeLogo = VersionControl.versionControlType == VersionControlType.Git ? new GUIContent(Resources.Load("Logos_Git_Small") as Texture2D) : new GUIContent(Resources.Load("Logos_Hg_Small") as Texture2D);
 	}
 	
