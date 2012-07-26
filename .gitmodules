@@ -1,0 +1,3 @@
+[submodule ".uvc-portablegit/Win/PortableGit"]
+	path = .uvc-portablegit/Win/PortableGit
+	url = git://github.com/Thinksquirrel-Software/msysgit.git

@@ -22,16 +22,59 @@
 //    You should have received a copy of the GNU General Public License
 //    along with Unity Version Control.  If not, see <http://www.gnu.org/licenses/>.
 //
+using UnityEngine;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
+using Debug = UnityEngine.Debug;
 
 namespace ThinksquirrelSoftware.UnityVersionControl.Core
 {
 	public static class Git
 	{
-		// Default - "git"
-		const string mGitCommand = "git";
+		static Git()
+		{
+			CacheGitCommand();
+		}
+		
+		private static string mGitCommandCache = null;
+		
+		private static string mGitCommand
+		{
+			get
+			{
+				if (mGitCommandCache == null)
+				{
+					CacheGitCommand();
+					
+					// Fallback - don't save to cache so we can try again
+					if (mGitCommandCache == null)
+						return "git";
+					else
+						return mGitCommandCache;
+				}
+				else
+				{
+					return mGitCommandCache;
+				}
+			}
+		}
+		
+		private static void CacheGitCommand()
+		{
+			// Recursively search for git install location
+			string[] directories = System.IO.Directory.GetDirectories(Application.dataPath, ".uvc-portablegit",System.IO.SearchOption.AllDirectories);
+			
+			// Return early if we found nothing
+			if (directories.Length < 1)
+				return;
+			
+			if (Application.platform == RuntimePlatform.WindowsEditor)
+			{
+				mGitCommandCache = directories[0] + "/Win/PortableGit/bin/git.exe";
+			}
+		}
+		
 		// Configuration argument to add to every command
 		const string mGitConfig = "-c core.quotepath=false ";
 		
