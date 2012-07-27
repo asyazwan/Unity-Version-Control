@@ -56,6 +56,21 @@ namespace ThinksquirrelSoftware.UnityVersionControl.Core
 		}
 		
 		/// <summary>
+		/// Opens the default terminal.
+		/// </summary>
+		public static void OpenTerminal()
+		{
+			if (Application.platform == RuntimePlatform.WindowsEditor)
+			{
+				RunCommand("start", "cmd.exe", EmptyHandler);
+			}
+			else if (Application.platform == RuntimePlatform.OSXEditor)
+			{
+				RunCommand("open", "-n com.apple.Terminal", EmptyHandler);
+			}
+		}
+		
+		/// <summary>
 		/// Runs a command line process asynchronously with the specified arguments.
 		/// </summary>
 		/// <remarks>
